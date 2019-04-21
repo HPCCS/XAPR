@@ -33,6 +33,8 @@ Application resilience is different across di erent platforms. However, programs
 
 * We use the transfer learning under ./Transfer_Learning_Prediction/ for training and predicting. 
 
+* Note that we make changes to the sklearn library file multilayer_perceptron.py to enable transfer learning. Please replace sklearn/neural_network/multilayer_perceptron.py with the modified multilayer_perceptron.py under ./Transfer_Learning_Prediction/. 
+
 # Prediction Model
 
 * The input to the prediction model is the input used by the prediction model in https://github.com/HPCCS/PARIS and the feature array for training of [40,37], the label array for training of [40,3]; the feature array for testing of [10,37], the label array for testing of [10,3].
