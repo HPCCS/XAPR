@@ -1,0 +1,26 @@
+backup/lulesh_all_kernels.cu:      CalcVolumeForceForElems_kernel<true> <<<dimGrid,block_size>>>
+backup/lulesh_all_kernels.cu:      CalcVolumeForceForElems_kernel<false> <<<dimGrid,block_size>>>
+backup/lulesh_all_kernels.cu:    AddNodeForcesFromElems_kernel<<<dimGrid,block_size>>>
+backup/lulesh_all_kernels.cu:    CalcAccelerationForNodes_kernel<<<dimGrid, dimBlock>>>
+backup/lulesh_all_kernels.cu:    ApplyAccelerationBoundaryConditionsForNodes_kernel<<<dimGrid, dimBlock>>>
+backup/lulesh_all_kernels.cu:    ApplyAccelerationBoundaryConditionsForNodes_kernel<<<dimGrid, dimBlock>>>
+backup/lulesh_all_kernels.cu:    ApplyAccelerationBoundaryConditionsForNodes_kernel<<<dimGrid, dimBlock>>>
+backup/lulesh_all_kernels.cu:    CalcPositionAndVelocityForNodes_kernel<<<dimGrid, dimBlock>>>
+backup/lulesh_all_kernels.cu:    CalcKinematicsAndMonotonicQGradient_kernel<<<dimGrid,block_size>>>
+backup/lulesh_all_kernels.cu:    CalcMonotonicQRegionForElems_kernel<<<dimGrid,dimBlock>>>
+backup/lulesh_all_kernels.cu:    ApplyMaterialPropertiesAndUpdateVolume_kernel<<<dimGrid,dimBlock>>>
+backup/lulesh_all_kernels.cu:    CalcTimeConstraintsForElems_kernel<dimBlock> <<<dimGrid,dimBlock>>>
+backup/lulesh_all_kernels.cu:    CalcMinDtOneBlock<max_dimGrid> <<<2,max_dimGrid, max_dimGrid*sizeof(Real_t), domain->streams[1]>>>(dev_mindthydro->raw(),dev_mindtcourant->raw(),domain->dtcourant_h,domain->dthydro_h, dimGrid);
+lulesh.cu:      CalcVolumeForceForElems_kernel<true> <<<dimGrid,block_size>>>
+lulesh.cu:      CalcVolumeForceForElems_kernel<false> <<<dimGrid,block_size>>>
+lulesh.cu:    AddNodeForcesFromElems_kernel<<<dimGrid,block_size>>>
+lulesh.cu:    CalcAccelerationForNodes_kernel<<<dimGrid, dimBlock>>>
+lulesh.cu:    ApplyAccelerationBoundaryConditionsForNodes_kernel<<<dimGrid, dimBlock>>>
+lulesh.cu:    ApplyAccelerationBoundaryConditionsForNodes_kernel<<<dimGrid, dimBlock>>>
+lulesh.cu:    ApplyAccelerationBoundaryConditionsForNodes_kernel<<<dimGrid, dimBlock>>>
+lulesh.cu:    CalcPositionAndVelocityForNodes_kernel<<<dimGrid, dimBlock>>>
+lulesh.cu:    CalcKinematicsAndMonotonicQGradient_kernel<<<dimGrid,block_size>>>
+lulesh.cu:    CalcMonotonicQRegionForElems_kernel<<<dimGrid,dimBlock>>>
+lulesh.cu:    ApplyMaterialPropertiesAndUpdateVolume_kernel<<<dimGrid,dimBlock>>>
+lulesh.cu:    CalcTimeConstraintsForElems_kernel<dimBlock> <<<dimGrid,dimBlock>>>
+lulesh.cu:    CalcMinDtOneBlock<max_dimGrid> <<<2,max_dimGrid, max_dimGrid*sizeof(Real_t), domain->streams[1]>>>(dev_mindthydro->raw(),dev_mindtcourant->raw(),domain->dtcourant_h,domain->dthydro_h, dimGrid);
