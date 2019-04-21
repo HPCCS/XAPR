@@ -1,0 +1,149 @@
+Sun Oct  7 16:28:20 2018: Starting Initialization
+
+
+Mini-Application Name    : CoMD-cuda
+Mini-Application Version : 1.1
+Platform:
+  hostname: n02
+  kernel name: 'Linux'
+  kernel release: '4.2.0-27-generic'
+  processor: 'x86_64'
+Build:
+  CC: '/usr/bin/mpicc'
+  compiler version: 'gcc (Ubuntu 4.8.4-2ubuntu1~14.04.4) 4.8.4'
+  CFLAGS: '-std=c++11 -Wno-unused-result -DMAXATOMS=256 -I/usr/local/cuda-7.0//targets/x86_64-linux/include/thrust/system/cuda/detail/cub/ -DCOMD_DOUBLE -g -O5  -I/usr/local/cuda-7.0//targets/x86_64-linux/include/'
+  LDFLAGS: '-lm -L/usr/local/cuda-7.0//lib64 -lcudart'
+  using MPI: false
+  Threading: none
+  Double Precision: true
+Run Date/Time: 2018-10-07, 16:28:20
+
+Command Line Parameters:
+  doeam: 0
+  potDir: pots
+  potName: Cu_u6.eam
+  potType: funcfl
+  nx: 20
+  ny: 20
+  nz: 20
+  xproc: 1
+  yproc: 1
+  zproc: 1
+  Lattice constant: -1 Angstroms
+  nSteps: 100
+  printRate: 10
+  Time step: 1 fs
+  Initial Temperature: 0 K
+  Initial Delta: 0.1 Angstroms
+
+  GPU async opt: 0
+  GPU profiling mode: 0
+  GPU method: thread_atom
+  Space-filling (Hilbert): 0
+
+Host n02 using GPU 0: Tesla K80
+
+Simulation data: 
+  Total atoms        : 32000
+  Min global bounds  : [   0.0000000000,   0.0000000000,   0.0000000000 ]
+  Max global bounds  : [  72.3000000000,  72.3000000000,  72.3000000000 ]
+
+Decomposition data: 
+  Processors         :      1,     1,     1
+  Local boxes        :      6,     6,     6 =      216
+  Box size           : [  12.0500000000,  12.0500000000,  12.0500000000 ]
+  Box factor         : [   1.0410367171,   1.0410367171,   1.0410367171 ] 
+  Max Link Cell Occupancy: 172 of 256
+
+Potential data: 
+  Potential type   : Lennard-Jones
+  Species name     : Cu
+  Atomic number    : 29
+  Mass             : 63.55 amu
+  Lattice Type     : FCC
+  Lattice spacing  : 3.615 Angstroms
+  Cutoff           : 11.575 Angstroms
+  Epsilon          : 0.167 eV
+  Sigma            : 2.315 Angstroms
+
+Memory data: 
+  Intrinsic atom footprint =   88 B/atom 
+  Total atom footprint     =   2.686 MB (  2.69 MB/node)
+  Link cell atom footprint =   4.641 MB/node
+  Link cell atom footprint =  11.000 MB/node (including halo cell data
+
+
+Initial energy : 0.000000000000, atom count : 32000 
+
+Sun Oct  7 16:28:25 2018: Initialization Finished
+
+Sun Oct  7 16:28:25 2018: Starting simulation
+
+#                                                                                         Performance
+#  Loop   Time(fs)       Total Energy   Potential Energy     Kinetic Energy  Temperature   (us/atom)     # Atoms
+      0       0.00     0.000000000000     0.000000000000     0.000000000000       0.0000     0.0000        32000
+     10      10.00     0.000000000000     0.000000000000     0.000000000000       0.0000     0.1657        32000
+     20      20.00     0.000000000000     0.000000000000     0.000000000000       0.0000     0.1619        32000
+     30      30.00     0.000000000000     0.000000000000     0.000000000000       0.0000     0.1604        32000
+     40      40.00     0.000000000000     0.000000000000     0.000000000000       0.0000     0.1571        32000
+     50      50.00     0.000000000000     0.000000000000     0.000000000000       0.0000     0.1445        32000
+     60      60.00     0.000000000000     0.000000000000     0.000000000000       0.0000     0.1439        32000
+     70      70.00     0.000000000000     0.000000000000     0.000000000000       0.0000     0.1441        32000
+     80      80.00     0.000000000000     0.000000000000     0.000000000000       0.0000     0.1410        32000
+     90      90.00     0.000000000000     0.000000000000     0.000000000000       0.0000     0.1317        32000
+    100     100.00     0.000000000000     0.000000000000     0.000000000000       0.0000     0.1310        32000
+Sun Oct  7 16:28:26 2018: Ending simulation
+
+
+
+Simulation Validation:
+  Initial energy  : 0.000000000000
+  Final energy    : 0.000000000000
+  eFinal/eInitial : 1.038053
+  Final atom count : 32000, no atoms lost
+
+
+Timings for Rank 0
+        Timer        # Calls    Avg/Call (s)   Total (s)    % Loop
+___________________________________________________________________
+total                      1       6.1659        6.1659     1300.50
+loop                       1       0.4741        0.4741      100.00
+timestep                  10       0.0474        0.4740       99.98
+  position               100       0.0000        0.0000        0.00
+  velocity               200       0.0000        0.0000        0.00
+  redistribute           101       0.0047        0.4759      100.38
+    atomHalo             101       0.0046        0.4677       98.65
+  force                  101       0.0000        0.0001        0.02
+commHalo                 303       0.0000        0.0000        0.01
+commReduce                36       0.0000        0.0000        0.00
+
+Timing Statistics Across 1 Ranks:
+        Timer        Rank: Min(s)       Rank: Max(s)      Avg(s)    Stdev(s)
+_____________________________________________________________________________
+total                0:    6.1659       0:    6.1659      6.1659      0.0000
+loop                 0:    0.4741       0:    0.4741      0.4741      0.0000
+timestep             0:    0.4740       0:    0.4740      0.4740      0.0000
+  position           0:    0.0000       0:    0.0000      0.0000      0.0000
+  velocity           0:    0.0000       0:    0.0000      0.0000      0.0000
+  redistribute       0:    0.4759       0:    0.4759      0.4759      0.0000
+    atomHalo         0:    0.4677       0:    0.4677      0.4677      0.0000
+  force              0:    0.0001       0:    0.0001      0.0001      0.0000
+commHalo             0:    0.0000       0:    0.0000      0.0000      0.0000
+commReduce           0:    0.0000       0:    0.0000      0.0000      0.0000
+
+---------------------------------------------------
+ Average atom update rate:       0.15 us/atom/task
+---------------------------------------------------
+
+
+---------------------------------------------------
+ Average all atom update rate:   0.15 us/atom
+---------------------------------------------------
+
+
+---------------------------------------------------
+ Average atom rate:              6.75 atoms/us
+---------------------------------------------------
+
+Sun Oct  7 16:28:26 2018: CoMD Ending
+
