@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <fstream>
 
-#define BATCH_SIZE 5000
+#define BATCH_SIZE 1000000
 #include "gpu_rel_feature.h"
 #include "instr_info.h"
 using namespace std;

@@ -1,9 +1,8 @@
-/** _4instype_detection
- * there are four types of instructions
- * 1) Control fpow changing instructions
- * 2) Floating point instructions
- * 3) Integer instructions
- * 4) Memory-related instructions
+/** there are 4 GPU related features
+ * 1) Bank Access Stride (BAS): bank_conf_rate
+ * 2) Memory Transaction Rate per warp (MTRate)
+ * 3) Branch Divergence (BD)
+ * 4) ILP Rate (ILPRate): we add a dummy instruction to the inner most loop of nested loops and count the frequency that the dummy instruction occurs in N instructions. 
  */
 
 #include "gpu_rel_feature.h"
@@ -48,6 +47,17 @@ void gpu_rel_feature::calculator(vector<instr_info> &instr_info_set, ofstream &o
   int num_br_window = 0, num_br_div = 0;
   int first = 0, second = 0;
   double ave_trans_rate = 0;
+  double branch_div_rate = 0;
+  int N1 = 0, N2 = 0;
+  int ilp_num1 = 0;
+  int ilp_num2 = 0;
+  double n1_rate_sum=0;
+  double n2_rate_sum=0;
+  double n1_rate=0;
+  double n2_rate=0;
+  double ilp_rate = 0;
+  int n1_chunk_num = 0;
+  int n2_chunk_num = 0;
   //printf("batch size is %d\n", sz);
 /*
   #pragma omp parallel
@@ -59,13 +69,15 @@ void gpu_rel_feature::calculator(vector<instr_info> &instr_info_set, ofstream &o
     }
   }
 */
+//  1) Bank Access Stride (BAS)
 //  #pragma omp parallel shared(instr_info_set)
   //{
   //  #pragma omp for
     for(int i=0;i<sz;i++){
       opid =  instr_info_set[i].opcodeId;
+      N1++; 
+      N2++;
       if(opid==29){
-
 	// acquire specific information 
 	  tmp_line_num = instr_info_set[i].lineId;
 	  oprd_sz = instr_info_set[i].oprd_line_set.size();
@@ -107,7 +119,10 @@ void gpu_rel_feature::calculator(vector<instr_info> &instr_info_set, ofstream &o
 	  signal = false;
         }
       } // end of if(opid==29)
+      
+      
 
+      // 2) Memory Transaction Rate per warp (MTRate) 
       if(opid == 27 || opid == 28){
 	// acquire specific information
 	tmp_line_num = instr_info_set[i].lineId;
@@ -144,21 +159,43 @@ void gpu_rel_feature::calculator(vector<instr_info> &instr_info_set, ofstream &o
 	}
       } // end of if opid==27,28
 
-
+      // * 3) Branch Divergence (BD) 
       if(opid == 2){
 	oprd_sz = instr_info_set[i].oprd_line_set.size();
 	if(oprd_sz > 2){
 	  tmp_sz = instr_info_set[i].oprd_line_set[0].sizeOfArgu;
-	  tmp_val = instr_info_set[i].oprd_line_set[0].dynValue;
+  	  tmp_val = instr_info_set[i].oprd_line_set[0].dynValue;
+	  // push back info into br_div
+      	  br_div a_br_div;
+          a_br_div.op_sz = tmp_sz;
+          a_br_div.dyn_value = tmp_val;
+          br_div_set.push_back(a_br_div);
 	}
       } // end of opid ==2
 
  
-      // push back info into br_div
-      br_div a_br_div;
-      a_br_div.op_sz = tmp_sz;
-      a_br_div.dyn_value = tmp_val;
-      br_div_set.push_back(a_br_div);
+      // ILP Rate (ILPRate):
+      // We use a dummy instruction such as "int dummy = 12;"
+      // Thus, if we see a register name is dummy in an instruction, 
+      // we find the dummy instruction
+      if(((opid==28)&&(instr_info_set[i].oprd_line_set[0].regName=="dummy"||instr_info_set[i].oprd_line_set[1].regName=="dummy"))){ 
+        ilp_num1++;
+	ilp_num2++;
+      }
+
+      // Every 5000 instructions, we check the ILP Rate
+      if(N1%5000==0){
+	n1_rate_sum+=ilp_num1/5000;
+	n1_chunk_num++;
+	ilp_num1 = 0;
+      }
+
+      // Every 800 instructions, we check the ILP Rate
+      if(N2%800==0){
+	n2_rate_sum+=ilp_num2/800;
+ 	n2_chunk_num++;
+	ilp_num2 = 0;
+      }
 
 
     } // end of new iter on instr_info 
@@ -187,6 +224,7 @@ void gpu_rel_feature::calculator(vector<instr_info> &instr_info_set, ofstream &o
       }
 
       // stride ratio of even (bank-conflict) over the entire space
+      // 1) Bank Access Stride (BAS) Outcome: 
       bank_conf_rate = even/(even+odd);
       
       // free space of mem_stride
@@ -210,6 +248,7 @@ void gpu_rel_feature::calculator(vector<instr_info> &instr_info_set, ofstream &o
       for(auto it=trans_rate_window.begin();it!=trans_rate_window.end();++it){
 	first = it->first;
 	second = it->second;
+        // 2) Memory Transaction Rate (MTRate)
 	ave_trans_rate += 1/first*second/num_window;
       }
 
@@ -219,6 +258,7 @@ void gpu_rel_feature::calculator(vector<instr_info> &instr_info_set, ofstream &o
       }
       trans_rate_set.clear();
 
+      // * 3) Branch Divergence (BD) 
       // count windows that have branch div
       br_div_sz = br_div_set.size();
       for(int i=0;i<br_div_sz;i++){
@@ -239,38 +279,22 @@ void gpu_rel_feature::calculator(vector<instr_info> &instr_info_set, ofstream &o
 	}
       }
 
+      // * 3) Branch Divergence (BD) 
+      branch_div_rate = num_br_div/num_br_window;
+
       // free memory space
       br_div_set.clear();
 
-/*
-     if(((opid==28)&&(instr_info_set[i].oprd_line_set[0].regName=="az"||instr_info_set[i].oprd_line_set[1].regName=="az"))){
-    	//assert(instr_info_set[i].oprd_line_set[0].arguId == "2" && "ERROR: choosing the wrong operand!");
-        ou<<sh_num<<" "<<con_num<<" "<<tr_num<<" "<<ow_num<<" "<<cf_num<<" "<<fp_num<<" "<<in_num<<" "<<mem_num<<endl;
-	cf_num=0;
-	sh_num=0;
-	tr_num=0;
-	fp_num=0;
-	con_num=0;
-	in_num=0;
-	mem_num=0;
-      }
-      if(signal){
-        if(i==(sz-1)){
-    	  //assert(instr_info_set[i].oprd_line_set[0].arguId == "2" && "ERROR: choosing the wrong operand!");
-          ou<<sh_num<<" "<<con_num<<" "<<tr_num<<" "<<ow_num<<" "<<cf_num<<" "<<fp_num<<" "<<in_num<<" "<<mem_num<<endl;
-	  cf_num=0;
-	  sh_num=0;
-	  tr_num=0;
-	  fp_num=0;
-	  con_num=0;
-	  in_num=0;
-	  mem_num=0;
-	}
-      }
-    }// Old end of iter on instr_info
-*/
 
-  //} // end of pragma
+      // ILP Rate (ILPRate):
+      n1_rate = n1_rate_sum/n1_chunk_num;
+      n2_rate = n2_rate_sum/n2_chunk_num;
+      ilp_rate = n1_rate/n2_rate;
+
+      // Output results to file
+      // BAS << MTRate << BD << ILPRate
+      ou << bank_conf_rate << " " << ave_trans_rate << " " << branch_div_rate << " " << ilp_rate << " "<< n1_rate <<" " << n2_rate << endl;
+ 
 }
 
 

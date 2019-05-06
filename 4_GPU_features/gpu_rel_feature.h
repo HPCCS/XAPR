@@ -6,7 +6,7 @@
 #include "instr_info.h"
 #include "omp.h"
 
-#define BATCH_SIZE 5000
+//#define BATCH_SIZE 5000
 
 class gpu_rel_feature
 {

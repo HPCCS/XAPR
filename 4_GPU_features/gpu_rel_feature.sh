@@ -5,5 +5,5 @@ do
   fname=$(basename "$filename")
   export TRACE_FILE_NAME=$fname
   echo "is processing ... "$TRACE_FILE_NAME
-  ./4instype
+  ./gpu_rel_feature
 done 
